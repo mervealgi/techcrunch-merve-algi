@@ -6,7 +6,6 @@ import org.testng.Assert;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
-
 import java.util.List;
 
 public class BaseTest {
@@ -27,16 +26,18 @@ public class BaseTest {
 
         // Find the 'The Latest' section
         WebElement theLatest = driver.findElement(By.xpath("(//div[@class='wp-block-group is-layout-flow wp-block-group-is-layout-flow'])[1]"));
-        List<WebElement> articles = theLatest.findElements(By.xpath("//div[@class='wp-block-tc23-post-picker-group rapid-read-enabled rapid-read-date']"));
+        List<WebElement> articles = theLatest.findElements(By.xpath("//div[@class='wp-block-tc23-post-picker-group rapid-read-enabled rapid-read-date']//div[@class='wp-block-tc23-post-picker']"));
+        System.out.println(articles.size());
+
 
         for (WebElement article : articles) {
-            // Check if the image exists
-            WebElement image = article.findElement(By.xpath(".//figure[contains(@class, 'post-block__media')]//img"));
+            WebElement image = article.findElement(By.xpath("//div[@class='wp-block-tc23-post-picker-group rapid-read-enabled rapid-read-date']//img[@class='attachment-post-thumbnail size-post-thumbnail wp-post-image']"));
             Assert.assertTrue(image.isDisplayed(), "Image is not displayed for an article");
+            System.out.println(image);
 
-            // Check if the title exists
-            WebElement title = article.findElement(By.xpath(".//header[contains(@class, 'post-block__header')]//h2"));
-            Assert.assertTrue(title.isDisplayed(), "Title is not displayed for an article");
+            WebElement author = article.findElement(By.xpath("//div[@class='wp-block-tc23-post-picker-group rapid-read-enabled rapid-read-date']//div[@class='wp-block-tc23-author-card-name has-xsmall-font-size wp-elements-d055c9e8dc404f1acd88f01867eaea50']"));
+            Assert.assertTrue(author.isDisplayed(), "Title is not displayed for an article");
+            System.out.println(author);
         }
     }
 
