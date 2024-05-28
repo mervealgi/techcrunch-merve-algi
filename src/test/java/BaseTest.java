@@ -2,6 +2,7 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.testng.Assert;
 import org.testng.annotations.AfterClass;
@@ -24,10 +25,10 @@ public class BaseTest {
     }
 
     @Test
-    public void test() {
+    public void checkArticlesTest() {
         driver.get("https://techcrunch.com/");
 
-        // "The Latest" bölümündeki makaleleri bulun
+        // Keep the news in a list
         WebElement theLatest = driver.findElement(By.xpath("(//div[@class='wp-block-group is-layout-flow wp-block-group-is-layout-flow'])[1]"));
         List<WebElement> articles = theLatest.findElements(By.xpath("//div[@class='wp-block-tc23-post-picker-group rapid-read-enabled rapid-read-date']//div[@class='wp-block-tc23-post-picker']"));
         System.out.println(articles.size());
@@ -43,7 +44,8 @@ public class BaseTest {
 
         // Check the article list is empty or not
         if (articles.isEmpty()) {
-            System.out.println("No articles found in 'The Latest' section.");
+            System.out.println("No articles found");
+
         } else {
             // Create an index for random selection
             Random rand = new Random();
@@ -55,15 +57,29 @@ public class BaseTest {
             String randomArticleUrl = randomArticle.findElement(By.cssSelector("a")).getAttribute("href");
 
 
-            // Print the news title
-            // System.out.println("Selected Article Title: " + randomArticle.findElement(By.cssSelector("h2")).getText());
+            // Print the selected news title
+            System.out.println("Selected Article Title: " + randomArticle.findElement(By.cssSelector("h2")).getText());
 
             // Click to random news and wait to appear
             randomArticle.click();
             WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
 
-        }
+            String newPageTitle = wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("h1"))).getText();
+            String newPageUrl = driver.getCurrentUrl();
 
+            // Check the selected news url + title are same with the new page's
+            if (randomArticleUrl.equals(newPageUrl)) {
+                System.out.println("URLs matched successfully." + randomArticleUrl + newPageUrl);
+                if (randomArticleTitle.equals(newPageTitle)) {
+                    System.out.println("Titles matched successfully." + randomArticleTitle + newPageTitle);
+                } else {
+                    System.out.println("URL do not match." + randomArticleTitle + newPageTitle);
+                    }
+
+            } else {
+                System.out.println("Title do not match." + randomArticleUrl + newPageUrl);
+            }
+        }
     }
 
         @AfterClass
